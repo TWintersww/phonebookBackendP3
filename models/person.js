@@ -10,9 +10,26 @@ mongoose.connect(url)
         console.log('failed to connect to MDB')
     })
 
+const pNumRegexCheck = (v) => {
+    const regEx = /^\d{2,3}-\d+$/
+
+    return v.length >= 8 && regEx.test(v)
+}
+
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        minLength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        validate: {
+            validator: pNumRegexCheck,
+            message: props => `${props.value} is not a valid phone number`
+        },
+        required: true
+    }
 })
 personSchema.set('toJSON', {
     transform: (document, returnedObject) => {
